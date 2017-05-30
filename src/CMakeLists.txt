@@ -486,6 +486,7 @@ add_library(server
 	index/txindex.cpp
 	init.cpp
 	interfaces/handler.cpp
+	interfaces/chain.cpp
 	interfaces/node.cpp
 	dbwrapper.cpp
 	merkleblock.cpp
