@@ -493,6 +493,7 @@ add_library(server
 	net.cpp
 	net_processing.cpp
 	noui.cpp
+  outputtype.cpp
 	policy/fees.cpp
 	policy/policy.cpp
 	pow.cpp
