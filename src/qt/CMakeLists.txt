@@ -318,6 +318,7 @@ if(BUILD_WALLET)
 			transactionrecord.cpp
 			transactiontablemodel.cpp
 			transactionview.cpp
+			walletcontroller.cpp
 			walletframe.cpp
 			walletmodel.cpp
 			walletmodeltransaction.cpp
