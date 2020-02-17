@@ -155,7 +155,6 @@ add_compiler_flags(
 	-Wall
 	-Wextra
 	-Wformat
-	-Wvla
 	-Wformat-security
 	-Wcast-align
 	-Wunused-parameter
@@ -476,6 +475,7 @@ add_library(server
 	blockfilter.cpp
 	chain.cpp
 	checkpoints.cpp
+  checksigs.cpp
 	config.cpp
 	consensus/activation.cpp
 	consensus/tx_verify.cpp
@@ -514,8 +514,8 @@ add_library(server
 	torcontrol.cpp
 	txdb.cpp
 	txmempool.cpp
-    upgrade_check.cpp
-    utxo_functions.cpp
+  upgrade_check.cpp
+  utxo_functions.cpp
 	validation.cpp
 	validationinterface.cpp
 )
