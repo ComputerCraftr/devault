@@ -1564,7 +1564,7 @@ bool CWallet::CanGetAddresses(bool internal) {
     LOCK(cs_wallet);
     // Check if the keypool has keys
     bool keypool_has_keys;
-    if (internal && CanSupportFeature(FEATURE_BLANK)) {
+    if (internal && CanSupportFeature(FEATURE_FLAGS)) {
         keypool_has_keys = setInternalKeyPool.size() > 0;
     } else {
         keypool_has_keys = KeypoolCountExternalKeys() > 0;
@@ -5103,6 +5103,13 @@ CWallet::CreateWalletFromFile(const CChainParams &chainParams,
         }
     }
 
+    // If old wallet and version doesn't have wallet flags,
+    // set walletInstance wallet flags to a default with EC keys but no BLS,blank,etc
+    {
+        if (walletInstance->nWalletMaxVersion < FEATURE_FLAGS) {
+            walletInstance->SetLegacyWalletFlags();
+        }
+    }
 
     if (gArgs.GetBoolArg("-upgradewallet", fFirstRun)) {
         int nMaxVersion = gArgs.GetArg("-upgradewallet", 0);
@@ -5123,6 +5130,8 @@ CWallet::CreateWalletFromFile(const CChainParams &chainParams,
 
         walletInstance->SetMaxVersion(nMaxVersion);
     }
+
+
 
     if (fFirstRun) {
       CKeyingMaterial _vMasterKey; // Just new Random Bytes
