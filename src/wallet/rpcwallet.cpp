@@ -3359,7 +3359,6 @@ static UniValue getwalletinfo(const Config &config,
         return NullUniValue;
     }
 
-    EnsureWalletIsUnlocked(pwallet);
 
     if (request.fHelp || request.params.size() != 0) {
         throw std::runtime_error(
@@ -3411,6 +3410,8 @@ static UniValue getwalletinfo(const Config &config,
             HelpExampleRpc("getwalletinfo", ""));
     }
 
+    EnsureWalletIsUnlocked(pwallet);
+    
     // Make sure the results are valid at least up to the most recent block
     // the user could have gotten from another RPC command prior to now
     pwallet->BlockUntilSyncedToCurrentChain();
