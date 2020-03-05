@@ -7,6 +7,7 @@
 #include <chainparams.h>
 #include <consensus/merkle.h>
 
+#include <arith_uint256.h>
 #include <tinyformat.h>
 #include <util/strencodings.h>
 #include <util/system.h>
@@ -38,6 +39,19 @@ static CBlock CreateGenesisBlock(const char *pszTimestamp,
     genesis.vtx.push_back(MakeTransactionRef(std::move(txNew)));
     genesis.hashPrevBlock.SetNull();
     genesis.hashMerkleRoot = BlockMerkleRoot(genesis);
+
+    arith_uint256 hashTarget = arith_uint256().SetCompact(genesis.nBits);
+    while (true) {
+        arith_uint256 hash = UintToArith256(genesis.GetHash());
+        if (hash <= hashTarget) {
+            // Found a solution
+            printf("genesis block found\n   hash: %s\n target: %s\n  nonce: %u\n", hash.ToString().c_str(), hashTarget.ToString().c_str(), genesis.nNonce);
+            break;
+        }
+        genesis.nNonce += 1;
+    }
+    assert(UintToArith256(genesis.GetHash()) <= hashTarget);
+
     return genesis;
 }
 
@@ -120,6 +134,8 @@ public:
         genesis = CreateGenesisBlock(1559660400, 3423714883, 0x1d00ffff, 1,
                                      50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
+        printf("Merkle hash main: %s\n", genesis.hashMerkleRoot.ToString().c_str());
+        printf("Block hash main: %s\n", consensus.hashGenesisBlock.ToString().c_str());
         assert(consensus.hashGenesisBlock ==
                uint256S("0000000038e62464371566f6a8d35c01aa54a7da351b2dbf85d92f"
                         "30357f3a90"));
@@ -215,14 +231,16 @@ public:
         nPruneAfterHeight = 1000;
 
         genesis =
-            CreateGenesisBlock(1570974562, 3551570310, 0x1d00ffff, 1, 50 * COIN);
+            CreateGenesisBlock(1583370000, 0, 0x1f00ffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock ==
+        printf("Merkle hash test: %s\n", genesis.hashMerkleRoot.ToString().c_str());
+        printf("Block hash test: %s\n", consensus.hashGenesisBlock.ToString().c_str());
+        /*assert(consensus.hashGenesisBlock ==
                uint256S("00000000797947527458fac580afda78e5274b3cd3c8ca9c0b53d6"
                         "53891eeed9"));
         assert(genesis.hashMerkleRoot ==
                uint256S("95d9f62f327ebae0d88f38c72224407e5dde5157f952cdb70921c2"
-                        "dda326f35b"));
+                        "dda326f35b"));*/
 
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
@@ -293,14 +311,16 @@ public:
         nDefaultPort = 18444;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1559660400, 3, 0x207fffff, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1583370000, 0, 0x207fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock ==
+        printf("Merkle hash reg: %s\n", genesis.hashMerkleRoot.ToString().c_str());
+        printf("Block hash reg: %s\n", consensus.hashGenesisBlock.ToString().c_str());
+        /*assert(consensus.hashGenesisBlock ==
                uint256S("7f39501a21abfd9930011aaf76bed139f16d896ca9bc66f9f4770d"
                         "345459d08a"));
         assert(genesis.hashMerkleRoot ==
                uint256S("95d9f62f327ebae0d88f38c72224407e5dde5157f952cdb70921c2"
-                        "dda326f35b"));
+                        "dda326f35b"));*/
 
         //!< Regtest mode doesn't have any DNS seeds.
         vSeeds.clear();
